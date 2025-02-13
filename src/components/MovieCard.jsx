@@ -1,4 +1,10 @@
+import React from "react";
+import confetti from "canvas-confetti";
+
 function MovieCard({movie}){
+
+
+
     return(
         <div className="movie-card">
 
@@ -20,7 +26,14 @@ function MovieCard({movie}){
     )
 }
 
+
+
 function favourite(){
+    confetti({
+        particleCount: 100,
+        spread: 100,
+        
+      });
     console.log('Favourite movie added')
   }
 

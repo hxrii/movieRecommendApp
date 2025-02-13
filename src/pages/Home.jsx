@@ -1,5 +1,10 @@
+import { useState } from "react"
 import MovieCard from "../components/MovieCard"
 function Home(){
+
+
+    const [searchQuery, setQuery] = useState("");
+
     const movies = [
         {id:1, title:"WildCraft", image:"www.google.com",description:"WildCraft"},
         {id:2, title:"The Last Dance", image:"www.google.com",description:"The Last Dance"},
@@ -10,15 +15,22 @@ function Home(){
         {id:7, title:"Pulp Fiction", image:"www.google.com",description:"Pulp Fiction"},
     ]
 
-    const handleSearch = () => {
-
+    const handleSearch = (e) => {
+        e.preventDefault()
+        console.log("Searched "+ searchQuery)
     }
 
     return (
         <div className="home">
             <h1>Movies</h1>
             <form onSubmit={handleSearch} className="search-form">
-                <input type="text" placeholder="Search movies..." className="search-input" />
+                <input type="text" 
+                       placeholder="Search movies..." 
+                       className="search-input"
+                       value={searchQuery}
+                       onChange={(e)=>(setQuery(e.target.value))}
+
+                 />
                 <button type="submit" className="search-button">Search</button>
             </form>
             <div className="movie-grid">
