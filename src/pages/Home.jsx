@@ -1,23 +1,58 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import MovieCard from "../components/MovieCard"
+import '../css/Home.css'
+import { getPopular, search } from '../services/api'
 function Home(){
 
 
     const [searchQuery, setQuery] = useState("");
+    const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const movies = [
-        {id:1, title:"WildCraft", image:"www.google.com",description:"WildCraft"},
-        {id:2, title:"The Last Dance", image:"www.google.com",description:"The Last Dance"},
-        {id:3, title:"The Great Wall", image:"www.google.com",description:"The Great Wall"},
-        {id:4, title:"The Matrix", image:"www.google.com",description:"The Matrix"},
-        {id:5, title:"The Shawshank Redemption", image:"www.google.com",description:"The Shawshank Redemption"},
-        {id:6, title:"Inception", image:"www.google.com",description:"Inception"},
-        {id:7, title:"Pulp Fiction", image:"www.google.com",description:"Pulp Fiction"},
-    ]
+    useEffect(()=>{
+        const loadPopularMovies = async () => {
+        try{
+            const PopularMovies = await getPopular();
+            setMovies(PopularMovies);
+            console.log(PopularMovies)
+        }
+        catch(error){
+            setError(error)
+            setLoading(false)
+        }
+        finally{
+            setLoading(false)
+        }
+     }
+     loadPopularMovies()
+    }
+    ,[]);
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault()
+        if(!searchQuery.trim()) return
+        if(loading) return
+
+        setLoading(true)
+
+        try {
+            const result = await search(searchQuery)
+            setMovies(result)
+        }
+        catch(error){
+            setError(error)
+            setLoading(false)
+        }
+        finally{
+            setLoading(false)
+            setQuery("")
+            setError(null)
+        }
+
+
         console.log("Searched "+ searchQuery)
+
     }
 
     return (
@@ -33,11 +68,14 @@ function Home(){
                  />
                 <button type="submit" className="search-button">Search</button>
             </form>
-            <div className="movie-grid">
+
+            {loading ? <div className="loading">Loading...</div> :
+            <div className="movies-grid">
             {movies.map((movie) => (
                 <MovieCard key={movie.id} movie={movie} />
             ))}
             </div>
+            }
         </div>
     )
 }
